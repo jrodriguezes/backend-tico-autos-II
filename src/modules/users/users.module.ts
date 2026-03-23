@@ -3,11 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { MailModule } from 'src/common/mail.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // Modulos que deben ser importados dentro de este modulo. forFeature se utiiliza
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    // Modulos que deben ser importados dentro de este modulo. forFeature se utiiliza
     // para registrar esquemas de Mongoose
+    MailModule,
   ], // Lo que module hace es, acceso a lo que otros modulos hacen o exportan por ejemplo el Schema de la BD
   controllers: [UsersController], // Se registra los controladores que manejan las solicitudes HTTP.
   providers: [UsersService], // Servicios y otras dependencias que proveen funcionalidades dentro del modulo.
