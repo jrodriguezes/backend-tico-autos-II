@@ -15,9 +15,27 @@ export class User {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: true })
+  fLastName: string;
+
+  @Prop({ required: false })
+  sLastName: string;
+
+  @Prop({ required: true })
+  mail: string;
+
+  @Prop({ required: true })
+  phoneNumber: string;
+
   // Importante: que NO salga en respuestas por defecto
   @Prop({ required: true, select: false })
   passwordHash: string;
+
+  @Prop({ default: 'pending' })
+  status: string;
+
+  @Prop()
+  verificationToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
