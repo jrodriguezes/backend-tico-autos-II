@@ -9,33 +9,41 @@ export type UserDocument = HydratedDocument<User>; // Simplemente nos aseguramos
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class User {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: false, unique: true, sparse: true })
   numberId: number;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   fLastName: string;
 
   @Prop({ required: false })
   sLastName: string;
 
-  @Prop({ required: true })
-  mail: string;
+  @Prop({ required: true, unique: true, lowercase: true, trim: true })
+  email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   phoneNumber: string;
 
-  // Importante: que NO salga en respuestas por defecto
-  @Prop({ required: true, select: false })
+  @Prop({ select: false })
   passwordHash: string;
 
   @Prop({ default: 'pending' })
   status: string;
 
   @Prop()
-  verificationToken: string;
+  verificationToken?: string;
+
+  @Prop({ default: 'local' })
+  authProvider: 'local' | 'google';
+
+  @Prop({ unique: true, sparse: true })
+  googleId?: string;
+
+  @Prop({ default: false })
+  numberIdValidated: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
