@@ -2,12 +2,11 @@ import sgMail from '@sendgrid/mail';
 
 export class MailService {
   constructor() {
-    console.log('API KEY:', process.env.SENDGRID_API_KEY);
     sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
   }
 
-  async sendVerificationEmail(email: string, token: string) {
-    const url = `http://localhost:3001/verify?token=${token}`;
+  async sendVerificationEmail(email: string, token: string, numberId: number) {
+    const url = `http://localhost:3001/email-verification?token=${token}&id=${numberId}`;
 
     const msg = {
       to: email,
@@ -23,8 +22,9 @@ export class MailService {
     try {
       const response = await sgMail.send(msg);
       console.log('EMAIL ENVIADO:', response);
+      console.log(url);
     } catch (error) {
-      console.error('ERROR AL ENVIAR EMAIL:', error.response?.body || error);
+      console.error('ERROR AL ENVIAR EMAIL:', error);
     }
   }
 }
