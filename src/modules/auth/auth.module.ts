@@ -23,8 +23,14 @@ import { AuthController } from './auth.controller';
 // Se encarga de verificar que el token enviado en el header Authorization sea valido
 import { JwtStrategy } from './jwt.strategy';
 
+import { User, UserSchema } from '../users/schemas/user.schema';
+
+import { MongooseModule } from '@nestjs/mongoose';
+import { GoogleStrategy } from './google.strategy';
+
 @Module({
   imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     UsersModule,
     PassportModule,
     JwtModule.register({
@@ -34,6 +40,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}
