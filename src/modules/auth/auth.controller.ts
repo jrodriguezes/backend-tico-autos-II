@@ -17,10 +17,24 @@ import type { Response, Request } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // ===========
+  // Login con correo/cedula y contraseña
+  // ===========
+
   @Post('login')
   login(@Body() body: { identifier: string; password: string }) {
     return this.authService.login(body.identifier, body.password);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  me(@Req() req: { user: { numberId: number } }) {
+    return req.user;
+  }
+
+  // ===========
+  // Login con google
+  // ===========
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -57,17 +71,6 @@ export class AuthController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('me')
-  me(@Req() req: { user: { numberId: number } }) {
-    return req.user;
-  }
-
-  @Patch('validate-email')
-  validateEmail(@Query('token') token: string, @Query('id') numberId: number) {
-    return this.authService.validateAccount(numberId, token);
-  }
-
   @Post('complete-google-registration')
   completeGoogleRegistration(
     @Body() body: { tempToken: string; numberId: number },
@@ -76,5 +79,23 @@ export class AuthController {
       body.tempToken,
       body.numberId,
     );
+  }
+
+  // ===========
+  // Validar cuenta con token enviado por email
+  // ===========
+
+  @Patch('validate-email')
+  validateEmail(@Query('token') token: string, @Query('id') numberId: number) {
+    return this.authService.validateAccount(numberId, token);
+  }
+
+  // ===========
+  // Verificar codigo de 2FA
+  // ===========
+
+  @Post('2fa/verify')
+  verifyTwoFactor(@Body() body: { userId: string; code: string }) {
+    return this.authService.verifyTwoFactor(body.userId, body.code);
   }
 }
