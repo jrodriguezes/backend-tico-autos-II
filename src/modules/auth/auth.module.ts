@@ -27,6 +27,7 @@ import { User, UserSchema } from '../users/schemas/user.schema';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { GoogleStrategy } from './google.strategy';
+import { TwilioVerifyService } from 'src/common/twilio-verify.service';
 
 @Module({
   imports: [
@@ -40,6 +41,6 @@ import { GoogleStrategy } from './google.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, TwilioVerifyService],
 })
 export class AuthModule {}
