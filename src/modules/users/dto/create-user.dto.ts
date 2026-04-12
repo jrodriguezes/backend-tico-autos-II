@@ -5,6 +5,7 @@ import {
   IsString,
   Min,
   MinLength,
+  Matches,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -29,7 +30,9 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @Matches(/^\+506\d{8}$/, {
+    message: 'El número debe venir en formato +50688887777',
+  })
   phoneNumber: string;
 
   @IsString()

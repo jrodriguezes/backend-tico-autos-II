@@ -9,6 +9,9 @@ export type UserDocument = HydratedDocument<User>; // Simplemente nos aseguramos
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class User {
+  // =========================================
+  // DATOS GENERALES DEL USUARIO
+  // =========================================
   @Prop({ required: false, unique: true, sparse: true })
   numberId: number;
 
@@ -27,6 +30,10 @@ export class User {
   @Prop({ required: false })
   phoneNumber: string;
 
+  // =========================================
+  // REGISTRO NORMAL / LOGIN CON CREDENCIALES
+  // =========================================
+
   @Prop({ select: false })
   passwordHash: string;
 
@@ -36,6 +43,10 @@ export class User {
   @Prop()
   verificationToken?: string;
 
+  // =========================================
+  // AUTENTICACION CON GOOGLE
+  // =========================================
+
   @Prop({ default: 'local' })
   authProvider: 'local' | 'google';
 
@@ -44,6 +55,16 @@ export class User {
 
   @Prop({ default: false })
   numberIdValidated: boolean;
+
+  // =========================================
+  // 2FA POR SMS
+  // =========================================
+
+  @Prop({ default: false })
+  twoFactorPending: boolean;
+
+  @Prop({ type: Date, default: null })
+  twoFactorRequestedAt: Date | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
