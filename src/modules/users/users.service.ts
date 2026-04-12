@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'; // Inyectar el modelo de mongoose
-import { Model, Types } from 'mongoose'; // Trabajar modelos mongoose
+import { Model } from 'mongoose'; // Trabajar modelos mongoose
 import { User, UserDocument } from './schemas/user.schema'; // Importamos el esquema de usuario y su tipo de documento
 import * as bcrypt from 'bcrypt'; // Para encriptar contraseñas
 import { CreateUserDto } from './dto/create-user.dto'; // DTO para crear usuario
@@ -22,6 +22,10 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private mailService: MailService,
   ) {}
+
+  // ===========
+  // Registro de usuario (con email y contraseña)
+  // ===========
 
   async create(dto: CreateUserDto) {
     const existsUser = await this.userModel.findOne({ numberId: dto.numberId });
@@ -64,31 +68,9 @@ export class UsersService {
     };
   }
 
-  async findByIdentifierWithHash(identifier: string) {
-    const isEmail = identifier.includes('@');
-
-    if (isEmail) {
-      return await this.userModel
-        .findOne({ email: identifier })
-        .select('+passwordHash');
-    }
-
-    return await this.userModel
-      .findOne({ numberId: Number(identifier) })
-      .select('+passwordHash');
-  }
-
-  async getOwnerNameByOwnerId(numberId: number) {
-    return await this.userModel.findOne({ numberId: numberId });
-  }
-
-  async findByGoogleId(googleId: string) {
-    return this.userModel.findOne({ googleId });
-  }
-
-  async findByMail(email: string) {
-    return this.userModel.findOne({ email: email.toLowerCase() });
-  }
+  // ===========
+  // Registro de usuario con Google
+  // ===========
 
   async createGooglePendingUser(googleUser: {
     googleId: string;
@@ -124,13 +106,9 @@ export class UsersService {
     });
   }
 
-  async findByMongoId(id: Types.ObjectId) {
-    return this.userModel.findById(id);
-  }
-
-  async findByNumberId(numberId: number) {
-    return this.userModel.findOne({ numberId });
-  }
+  // ===========
+  // Buscar en padron y validar numero de cédula
+  // ===========
 
   async lookupPadron(numberId: number): Promise<PadronPerson | null> {
     try {
@@ -147,7 +125,7 @@ export class UsersService {
         return null;
       }
 
-      // Validación mínima de que sí venga con forma esperada
+      // Validacion minima de que si venga con forma esperada
       if (
         typeof data === 'object' &&
         data !== null &&
@@ -164,5 +142,54 @@ export class UsersService {
       console.error('Error consultando padrón:', error);
       return null;
     }
+  }
+
+  // ===========
+  // Al iniciar sesion con email y contraseña, si el usuario tiene 2FA activado, se marca como pendiente de 2FA
+  // ===========
+
+  async setTwoFactorPending(userId: string, pending: boolean) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        twoFactorPending: pending,
+        twoFactorRequestedAt: pending ? new Date() : null,
+      },
+      { returnDocument: 'after' },
+    );
+  }
+
+  // ===========
+  // Helpers
+  // ===========
+
+  async findByNumberId(numberId: number) {
+    return this.userModel.findOne({ numberId });
+  }
+
+  async getOwnerNameByOwnerId(numberId: number) {
+    return await this.userModel.findOne({ numberId: numberId });
+  }
+
+  async findByGoogleId(googleId: string) {
+    return this.userModel.findOne({ googleId });
+  }
+
+  async findByMail(email: string) {
+    return this.userModel.findOne({ email: email.toLowerCase() });
+  }
+
+  async findByIdentifierWithHash(identifier: string) {
+    const isEmail = identifier.includes('@');
+
+    if (isEmail) {
+      return await this.userModel
+        .findOne({ email: identifier })
+        .select('+passwordHash');
+    }
+
+    return await this.userModel
+      .findOne({ numberId: Number(identifier) })
+      .select('+passwordHash');
   }
 }
