@@ -1,107 +1,81 @@
-# TicoAutos - Backend API
+# TicoAutos - Backend 🚙
 
-## Descripción del Proyecto
-Este es el componente **Backend** de la plataforma TicoAutos. Se trata de una robusta Web API desarrollada bajo una arquitectura de microservicios utilizando el estilo arquitectónico **REST**. El sistema gestiona la persistencia de datos, la lógica de negocio de vehículos, la autenticación de usuarios y la intermediación de mensajes entre compradores y vendedores.
+Servidor Web API y lógica central del ecosistema TicoAutos. Desarrollado bajo un esquema de Arquitectura Orientada a Servicios (SOA), garantizando alto rendimiento, modularización estricta y comunicación segura tanto para interfaces REST como GraphQL.
 
----
-
-## Información Académica
-*   **Institución:** Universidad Técnica Nacional (UTN)
-*   **Carrera:** Ingeniería del Software
-*   **Curso:** Programación en Ambiente Web II (ISW-711)
-*   **Profesor:** Bladimir Arroyo
-*   **Entrega:** Proyecto Final - Marzo 2026
+Este proyecto fue desarrollado como Proyecto Final para el curso **Programación en Ambiente Web II** (ISW-711) de la Universidad Técnica Nacional (UTN).
 
 ---
 
-## Tecnologías Utilizadas
-*   **Framework:** [NestJS](https://nestjs.com/) (Node.js)
-*   **Base de Datos:** [MongoDB](https://www.mongodb.com/) (vía Mongoose)
-*   **Lenguaje:** TypeScript
-*   **Autenticación:** [Passport.js](https://www.passportjs.org/) + JSON Web Tokens (JWT)
-*   **Seguridad:** Bcrypt (Hashing de contraseñas)
-*   **Gestión de Archivos:** [Multer](https://github.com/expressjs/multer) (para subida de imágenes de vehículos)
-*   **Validación:** Class-validator & Class-transformer
+## 📋 Requerimientos Implementados
+
+Este backend expone robustamente el cumplimiento de los requerimientos de la evaluación:
+
+1.  **Validación con Padrón Nacional:** Integración HTTP (vía Axios/Fetch) en el endpoint de registro, el cual consulta la Cédula Nacional en el API Público. Rechaza inscripciones inexistentes y autocompleta el nombre y apellido si es válida.
+2.  **Verificación SendGrid (Email Verification):** Al registrar una cuenta, el usuario queda en estado "Pendiente". El sistema envía un UUID o Hash firmado usando una integración de Emailing a su bandeja, activando la cuenta al resolver la ruta.
+3.  **Google OAuth2 (Login & Registro):** Flujo de autenticación estructurado mediante PassportJS y estrategias de Google. Incluye el proceso de interceptación si un usuario nuevo proviene de Google y requiere validación de edad obligatoria mediante su Cédula de Identidad.
+4.  **Verificación en Dos Pasos (2FA - SMS):** Integración con servicios de mensajería (Twilio/Alternativos). Autentica las contraseñas, despacha un número OTP vía mensaje de texto, y retiene el Token JWT de autorización real hasta que se valide el código.
+5.  **Capa GraphQL Integrada:** Apollo Server inyectado en la instancia de NestJS que expone servicios como los datos de Vehículos mediante Resolvers de GraphQL. Comparte el mismo contexto y barreras de seguridad (Guards) que REST, autorizándose a través del mismo token JWT.
+6.  **Validación de Mensajes de Chat con OpenAI:** A través de un Custom Service (`AiService`), el flujo de envío de mensajes hacia la base de datos es retenido y analizado por una instrucción de Inteligencia Artificial ("gpt-3.5-turbo" / "gpt-4o-mini"). La IA escanea por números de teléfono, enlaces o emails y rechaza la inserción indicando la regla dictaminada.
+7.  **Diagramado Arquitectónico:** Total cumplimiento de la separación y esquema mediante un diagrama ilustrativo de la solución final.
 
 ---
 
-## Estructura del Proyecto
-El código se organiza siguiendo el patrón modular de NestJS:
-```text
-/src
-├── database/         # Configuración y conexión a MongoDB
-├── modules/
-│   ├── auth/         # Estrategias (JWT/Local) y servicio de autenticación
-│   ├── chat/         # Lógica de mensajes, chats y estados de turnos
-│   ├── users/        # Gestión de perfiles y búsqueda por ID de usuario
-│   └── vehicles/     # CRUD de vehículos, filtros dinámicos y subida de fotos
-├── main.ts           # Punto de entrada de la aplicación
-└── app.module.ts     # Módulo raíz que integra todos los componentes
+## 🛠 Tecnologías Utilizadas
+
+-   **Node.js & TypeScript**
+-   **NestJS** (Framework Arquitectónico, Dependency Injection)
+-   **MongoDB & Mongoose** (Bases de datos no relacionales, Modelos, ODM)
+-   **GraphQL & Apollo Driver** (Consultas declarativas y resolutores)
+-   **Passport.js & JWT** (Manejo de estados sin sesiones, estrategias Google y Locales)
+-   **OpenAI SDK** (Machine Learning/Validación Inteligente)
+-   **Git** (Control de Versiones estricto en ramas main y flujos convencionales)
+
+---
+
+## 🚀 Guía de Instalación y Ejecución Local
+
+Para levantar el nodo de servidor:
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/jrodriguezes/backend-tico-autos-II.git
+cd backend-tico-autos-II
 ```
 
----
+### 2. Instalar dependencias
+```bash
+npm install
+```
 
-## Instalación y Ejecución
+### 3. Variables de Entorno
+Debes crear un archivo `.env` en la raíz de tu proyecto e introducir la configuración vital. Reemplaza los datos con los reales proporcionados en la integración:
+```env
+# Ejemplo de .env
+PORT=3000
+MONGODB_URI=mongodb+srv://tu-usuario:tu-pass@cluster...
+JWT_SECRET=tu_clave_secreta_aqui
+GOOGLE_CLIENT_ID=tu_cliente_id_google
+GOOGLE_CLIENT_SECRET=tu_secreto_google
+OPENAI_API_KEY=sk-tu_key_de_openai
+# Y otras variables de correo (Sendgrid) o SMS (Twilio)...
+```
 
-### Requisitos Previos
-*   Node.js (v20.20.0 recomendado)
-*   NPM (v10.8.2 recomendado)
-*   Nest CLI (`npm install -g @nestjs/cli`)
-
-### Pasos
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [url-del-repositorio]
-    ```
-
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configurar variables de entorno:**
-    Cree un archivo `.env` en la raíz con:
-    ```env
-    DATABASE_URL="tu_url_de_mongodb"
-    JWT_SECRET="tu_llave_secreta_super_segura"
-    ```
-
-4.  **Ejecutar en modo desarrollo:**
-    ```bash
-    npm run start:dev
-    ```
-
-5.  **Compilar para producción:**
-    ```bash
-    npm run build
-    ```
+### 4. Iniciar el Servidor
+Para arrancar NestJS en modo desarrollo con Hot-Reload:
+```bash
+npm run start:dev
+```
+El API estará localmente expuesta por defecto en `http://localhost:3000`.
 
 ---
 
-## Características Técnicas Implementadas
-*   **Arquitectura REST:** Endpoints limpios y semánticos para todas las entidades (User, Vehicle, Question, Answer).
-*   **Seguridad:** Rutas protegidas mediante Guards de Passport. Validación de tokens en cada petición privada.
-*   **Filtros Dinámicos:** Implementación de consultas avanzadas en MongoDB mediante parámetros Query, permitiendo rangos de precios, años y filtrado por texto (insensitive-case).
-*   **Paginación:** Sistema de `skip` y `limit` en el backend para optimizar la transferencia de datos.
-*   **Gestión de Chat:** Lógica de negocio para manejar turnos entre el dueño y el cliente interesado, asegurando que solo los actores correctos participen en la conversación.
-*   **Validación de DTOS:** Aseguramiento de la integridad de los datos entrantes mediante decoradores de validación.
+## 🧱 Estructura y Mejores Prácticas (Clean Code)
+
+Se han implementado y respetado lineamientos de Código Limpio y principios SOLID guiados por NestJS:
+-   Archivos separados rigurosamente por su función (`.controller.ts`, `.service.ts`, `.module.ts`, `.schema.ts`, `.resolver.ts`).
+-   Uso de **Data Transfer Objects (DTOs)** para validar los JSON entrantes con `class-validator` y `class-transformer`.
+-   Nomenclatura consistente en inglés para servicios de código y commits semánticos de Git.
 
 ---
 
-## Endpoints Principales (Resumen)
-
-### Auth
-- `POST /auth/register`: Registro de nuevos usuarios.
-- `POST /auth/login`: Autenticación y retorno de JWT.
-- `GET /auth/me`: Perfil del usuario autenticado.
-
-### Vehículos
-- `GET /vehicles`: Lista paginada con filtros opcionales.
-- `POST /vehicles`: Creación de vehículo (requiere imagen y JWT).
-- `PATCH /vehicles/:id`: Edición de datos e imagen.
-- `DELETE /vehicles/:id`: Eliminación física del registro.
-
-### Chats & Mensajería
-- `GET /chats/inbox`: Lista de chats activos para el usuario.
-- `POST /chats/message`: Envío de preguntas o respuestas.
-- `GET /chats/history`: Historial completo de una negociación específica.
+*Desarrollado para la Universidad Técnica Nacional - 2026*
