@@ -45,7 +45,7 @@ export class VehiclesController {
   }
 
   @Get('specification/:id')
-  getSpecification(@Param('id') _id: Types.ObjectId) {
+  getSpecification(@Param('id') _id: string) {
     return this.vehiclesService.getVehicleByStringQueryId(_id);
   }
 
