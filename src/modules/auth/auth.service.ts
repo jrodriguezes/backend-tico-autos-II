@@ -87,7 +87,7 @@ export class AuthService {
 
     // Si se inicio con cedula => login normal
     //Crear el payload (datos dentro del token)
-    const payload = { sub: user._id, numberId: user.numberId }; // "sub" = id del usuario
+    const payload = { sub: user._id, numberId: user.numberId, name: user.name }; // "sub" = id del usuario
 
     // Crear el token (aqui usa el JWT_SECRET y expiresIn)
     const access_token = await this.jwtService.signAsync(payload);
