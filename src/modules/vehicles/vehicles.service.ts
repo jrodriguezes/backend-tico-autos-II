@@ -4,7 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
-import { VehicleFiltersDto } from './dto/vehicle-filters.dto';
+// import { VehicleFiltersDto } from './dto/vehicle-filters.dto';
+import { VehicleFiltersInput } from './graphql/vehicle-filters.input';
 
 type TextFilter = {
   $regex: string;
@@ -81,6 +82,14 @@ export class VehiclesService {
     };
   }
 
+  async changeStatus(vehicleId: Types.ObjectId, dto: UpdateVehicleDto) {
+    const updateVehicle = await this.vehicleModel.findByIdAndUpdate(vehicleId, {
+      status: dto.status,
+    });
+
+    return updateVehicle;
+  }
+
   async deleteVehicle(vehicleId: Types.ObjectId) {
     return await this.vehicleModel.deleteOne({ _id: vehicleId });
   }
@@ -94,19 +103,11 @@ export class VehiclesService {
     return await this.vehicleModel.find({ ownerId: numberId });
   }
 
-  async getVehicleByStringQueryId(vehicleId: Types.ObjectId) {
-    return await this.vehicleModel.findById({ _id: vehicleId });
+  async getVehicleByStringQueryId(vehicleId: string) {
+    return await this.vehicleModel.findById(vehicleId);
   }
 
-  async changeStatus(vehicleId: Types.ObjectId, dto: UpdateVehicleDto) {
-    const updateVehicle = await this.vehicleModel.findByIdAndUpdate(vehicleId, {
-      status: dto.status,
-    });
-
-    return updateVehicle;
-  }
-
-  async getFilteredVehicles(dto: VehicleFiltersDto) {
+  async getFilteredVehicles(dto: VehicleFiltersInput) {
     const query: VehicleQuery = {};
 
     if (dto.brand) {
