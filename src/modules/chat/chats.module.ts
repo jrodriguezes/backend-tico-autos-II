@@ -7,6 +7,7 @@ import { Vehicle, VehicleSchema } from '../vehicles/schemas/vehicle.schema';
 import { User, UserSchema } from '../users/schemas/user.schema';
 import { ChatsController } from './chats.controller';
 import { ChatsService } from './chats.service';
+import { AiService } from './ai.service';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ChatsService } from './chats.service';
     ]),
   ],
   controllers: [ChatsController],
-  providers: [ChatsService],
+  providers: [ChatsService, AiService],
   exports: [ChatsService],
 })
 export class ChatsModule {}

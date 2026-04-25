@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ChatHistoryQueryDto } from './dto/chat-history-query.dto';
+import { AiService } from './ai.service';
 
 type InboxItem = {
   chatId: Types.ObjectId;
@@ -38,6 +39,8 @@ export class ChatsService {
 
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
+
+    private readonly aiService: AiService,
   ) {}
 
   async changeStatus(
@@ -91,6 +94,7 @@ export class ChatsService {
     questionDto?: QuestionDto,
     answerDto?: AnswerDto,
   ) {
+    // 1. Validaciones basicas de entrada
     if (!questionDto && !answerDto) {
       throw new Error('Debes enviar una pregunta o una respuesta');
     }
@@ -101,6 +105,22 @@ export class ChatsService {
       );
     }
 
+    // 2. NUEVA LOGICA DE IA: VALIDACION DE CONTENIDO
+
+    // Extraemos el texto que vamos a enviar (sea de la pregunta o de la respuesta)
+    const textToValidate = questionDto?.content || answerDto?.content || '';
+
+    // Llamamos a la IA para validar el mensaje
+    const isSafe = await this.aiService.validateMessage(textToValidate);
+
+    // Si la IA detecta datos de contacto, lanzamos el error de inmediato
+    if (!isSafe) {
+      throw new Error(
+        'Mensaje bloqueado: No se permite compartir información de contacto (teléfonos, emails, etc). Por favor usa la plataforma para negociar.',
+      );
+    }
+
+    // 3. Continuar con la lógica normal de chat
     const existingChat = await this.chatModel.findOne({
       vehicleId: chatDto.vehicleId,
       interestedClientId: chatDto.interestedClientId,
