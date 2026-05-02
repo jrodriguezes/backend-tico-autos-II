@@ -4,8 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
-// import { VehicleFiltersDto } from './dto/vehicle-filters.dto';
-import { VehicleFiltersInput } from './graphql/vehicle-filters.input';
+import { VehicleFiltersDto } from './dto/vehicle-filters.dto';
 
 type TextFilter = {
   $regex: string;
@@ -107,7 +106,7 @@ export class VehiclesService {
     return await this.vehicleModel.findById(vehicleId);
   }
 
-  async getFilteredVehicles(dto: VehicleFiltersInput) {
+  async getFilteredVehicles(dto: VehicleFiltersDto) {
     const query: VehicleQuery = {};
 
     if (dto.brand) {
