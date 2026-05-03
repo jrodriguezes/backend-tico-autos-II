@@ -6,7 +6,7 @@ import { User, UserDocument } from '../users/schemas/user.schema';
 import { ChatDto } from './dto/chat.dto';
 import { QuestionDto } from './dto/question.dto';
 import { AnswerDto } from './dto/answer.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ChatHistoryQueryDto } from './dto/chat-history-query.dto';
@@ -96,11 +96,11 @@ export class ChatsService {
   ) {
     // 1. Validaciones basicas de entrada
     if (!questionDto && !answerDto) {
-      throw new Error('Debes enviar una pregunta o una respuesta');
+      throw new BadRequestException('Debes enviar una pregunta o una respuesta');
     }
 
     if (questionDto && answerDto) {
-      throw new Error(
+      throw new BadRequestException(
         'No puedes enviar pregunta y respuesta en la misma petición',
       );
     }
@@ -115,7 +115,7 @@ export class ChatsService {
 
     // Si la IA detecta datos de contacto, lanzamos el error de inmediato
     if (!isSafe) {
-      throw new Error(
+      throw new BadRequestException(
         'Mensaje bloqueado: No se permite compartir información de contacto (teléfonos, emails, etc). Por favor usa la plataforma para negociar.',
       );
     }
@@ -130,16 +130,16 @@ export class ChatsService {
       const lastQuestion = await this.getLastQuestion(existingChat._id);
 
       if (!lastQuestion) {
-        throw new Error('No se encontro una pregunta para este chat');
+        throw new BadRequestException('No se encontro una pregunta para este chat');
       }
 
       if (answerDto) {
         if (existingChat.ownerId != answerDto.vehicleOwnerId) {
-          throw new Error('Solo el propietario del vehiculo puede responder');
+          throw new BadRequestException('Solo el propietario del vehiculo puede responder');
         }
 
         if (existingChat.turn != 'owner') {
-          throw new Error(
+          throw new BadRequestException(
             'No se ha podido realizar la peticion. Debe esperar a que el cliente escriba primero',
           );
         }
@@ -160,12 +160,12 @@ export class ChatsService {
 
       if (questionDto) {
         if (existingChat.interestedClientId != questionDto.interestedClientId) {
-          throw new Error(
+          throw new BadRequestException(
             'Solo el usuario interesado de este chat puede preguntar',
           );
         }
         if (existingChat.turn !== 'client') {
-          throw new Error(
+          throw new BadRequestException(
             'No se ha podido realizar la peticion. Debe esperar a que el dueño del vehiculo responda primero',
           );
         }
@@ -186,7 +186,7 @@ export class ChatsService {
       }
     }
     if (!questionDto) {
-      throw new Error('Para iniciar un chat debes enviar una pregunta');
+      throw new BadRequestException('Para iniciar un chat debes enviar una pregunta');
     }
 
     const chatResponse = await this.createChat(chatDto);
