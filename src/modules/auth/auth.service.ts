@@ -50,28 +50,32 @@ export class AuthService {
     const user = await this.usersService.findByIdentifierWithHash(identifier);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Creedenciales inválidas');
     }
 
     if (!user.passwordHash) {
-      throw new UnauthorizedException('This account must sign in with Google');
+      throw new UnauthorizedException(
+        'Esta cuenta no tiene contraseña, por favor inicia sesión con Google',
+      );
     }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
 
     if (!ok) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Creedenciales inválidas');
     }
 
     if (user.status !== 'active') {
-      throw new UnauthorizedException('User not currently active');
+      throw new UnauthorizedException(
+        'Usuario actualmente no activo. Por favor verifica tu correo para activar tu cuenta.',
+      );
     }
 
     // solo si se inicio con correo => 2FA por SMS
     if (isEmail) {
       if (!user.phoneNumber) {
         throw new UnauthorizedException(
-          'No phone number associated with this account',
+          'No hay telefono registrado para esta cuenta, no se puede usar autenticación de dos factores',
         );
       }
 
@@ -81,7 +85,7 @@ export class AuthService {
       return {
         requiresTwoFactor: true,
         userId: String(user._id),
-        message: 'Verification code sent by SMS',
+        message: 'Codigo de verificacion enviado via SMS',
       };
     }
 
@@ -103,11 +107,13 @@ export class AuthService {
     const user = await this.userModel.findById(userId);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Usuario no encontrado');
     }
 
     if (!user.twoFactorPending) {
-      throw new UnauthorizedException('No pending two-factor authentication');
+      throw new UnauthorizedException(
+        'No se requiere verificación de dos factores para este usuario',
+      );
     }
 
     const verificationResult = await this.twilioVerifyService.verifyCode(
@@ -116,7 +122,9 @@ export class AuthService {
     );
 
     if (verificationResult.status !== 'approved') {
-      throw new UnauthorizedException('Invalid or expired code');
+      throw new UnauthorizedException(
+        'Invalido o expirado código de verificación',
+      );
     }
 
     await this.usersService.setTwoFactorPending(String(user._id), false);
@@ -159,7 +167,7 @@ export class AuthService {
 
     if (existingMail) {
       throw new BadRequestException(
-        'An account with this email already exists. Please login with your credentials.',
+        'Una cuenta con este correo ya existe. Por favor inicia sesión con ese correo o usa otro método de autenticación.',
       );
     }
 
@@ -178,13 +186,13 @@ export class AuthService {
       await this.jwtService.verifyAsync<CompleteGoogleTokenPayload>(tempToken);
 
     if (payload.stage !== 'complete-google') {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Token invalido');
     }
 
     const currentUser = await this.userModel.findById(payload.sub);
 
     if (!currentUser) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Usuario no encontrado');
     }
 
     const existsNumberId = await this.usersService.findByNumberId(numberId);
@@ -226,7 +234,7 @@ export class AuthService {
   }
 
   // ===========
-  // login con Google (OAuth) pero el usuario no ha completado su registro porque no ha validado su numero de cedula,
+  // login con correo normal pero el usuario no ha completado su registro porque no ha validado su cuenta,
   // entonces se valida el token temporal y el numero de cedula, y si todo es correcto se completa el registro y se le da acceso
   // ===========
 
@@ -234,7 +242,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ numberId });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Creendenciales inválidas');
     }
 
     if (user.verificationToken == token) {
@@ -250,7 +258,7 @@ export class AuthService {
       return verifiedUser;
     } else {
       throw new UnauthorizedException(
-        'Account already authenticated or invalid token',
+        'Cuenta ya autenticada o token inválido. Por favor verifica tu correo para activar tu cuenta.',
       );
     }
   }

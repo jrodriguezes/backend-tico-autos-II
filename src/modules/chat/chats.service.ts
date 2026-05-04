@@ -96,7 +96,9 @@ export class ChatsService {
   ) {
     // 1. Validaciones basicas de entrada
     if (!questionDto && !answerDto) {
-      throw new BadRequestException('Debes enviar una pregunta o una respuesta');
+      throw new BadRequestException(
+        'Debes enviar una pregunta o una respuesta',
+      );
     }
 
     if (questionDto && answerDto) {
@@ -130,12 +132,16 @@ export class ChatsService {
       const lastQuestion = await this.getLastQuestion(existingChat._id);
 
       if (!lastQuestion) {
-        throw new BadRequestException('No se encontro una pregunta para este chat');
+        throw new BadRequestException(
+          'No se encontro una pregunta para este chat',
+        );
       }
 
       if (answerDto) {
         if (existingChat.ownerId != answerDto.vehicleOwnerId) {
-          throw new BadRequestException('Solo el propietario del vehiculo puede responder');
+          throw new BadRequestException(
+            'Solo el propietario del vehiculo puede responder',
+          );
         }
 
         if (existingChat.turn != 'owner') {
@@ -186,7 +192,9 @@ export class ChatsService {
       }
     }
     if (!questionDto) {
-      throw new BadRequestException('Para iniciar un chat debes enviar una pregunta');
+      throw new BadRequestException(
+        'Para iniciar un chat debes enviar una pregunta',
+      );
     }
 
     const chatResponse = await this.createChat(chatDto);
