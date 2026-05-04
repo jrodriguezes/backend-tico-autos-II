@@ -31,7 +31,19 @@ export class UsersService {
     const existsUser = await this.userModel.findOne({ numberId: dto.numberId });
 
     if (existsUser) {
-      throw new BadRequestException('User with this numberid already exists');
+      throw new BadRequestException('Usuario con esta cédula ya existe');
+    }
+
+    const existsEmail = await this.userModel.findOne({ email: dto.email.toLowerCase() });
+
+    if (existsEmail) {
+      throw new BadRequestException('Usuario con este correo ya existe');
+    }
+
+    const numberIdValidated = await this.lookupPadron(dto.numberId);
+
+    if (!numberIdValidated) {
+      throw new BadRequestException('Número de cédula no encontrado en padrón');
     }
 
     const token = randomBytes(32).toString('hex');
@@ -139,7 +151,7 @@ export class UsersService {
 
       return null;
     } catch (error) {
-      console.error('Error consultando padrón:', error);
+      console.error('Error consultando padron:', error);
       return null;
     }
   }
