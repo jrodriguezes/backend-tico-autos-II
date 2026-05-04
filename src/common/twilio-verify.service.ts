@@ -12,10 +12,11 @@ export class TwilioVerifyService {
     process.env.TWILIO_VERIFY_SERVICE_SID || '';
 
   async sendCode(phoneNumber: string) {
+    const cleanPhone = phoneNumber.replace(/[^\d+]/g, '');
     try {
       return await this.client.verify.v2
         .services(this.verifyServiceSid)
-        .verifications.create({ to: phoneNumber, channel: 'sms' });
+        .verifications.create({ to: cleanPhone, channel: 'sms' });
     } catch (error) {
       console.error('Error sending verification code:', error);
       throw new InternalServerErrorException(
@@ -25,10 +26,11 @@ export class TwilioVerifyService {
   }
 
   async verifyCode(phoneNumber: string, code: string) {
+    const cleanPhone = phoneNumber.replace(/[^\d+]/g, '');
     try {
       return await this.client.verify.v2
         .services(this.verifyServiceSid)
-        .verificationChecks.create({ to: phoneNumber, code });
+        .verificationChecks.create({ to: cleanPhone, code });
     } catch (error) {
       console.error('Error verifying code:', error);
       throw new InternalServerErrorException('Failed to verify code');
