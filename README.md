@@ -78,4 +78,8 @@ Se han implementado y respetado lineamientos de Código Limpio y principios SOLI
 
 ---
 
+## 🧱 Diagrama del sistema:
+<img width="1672" height="941" alt="ChatGPT Image May 4, 2026, 10_42_55 PM" src="https://github.com/user-attachments/assets/961b6f7a-f6d4-44b6-bd16-be8a5fc28edf" />
+
+
 *Desarrollado para la Universidad Técnica Nacional - 2026*
