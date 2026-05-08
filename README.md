@@ -6,6 +6,16 @@ Este proyecto fue desarrollado como Proyecto Final para el curso **Programación
 
 ---
 
+## 🖼 Vista Previa del Proyecto
+
+
+<img width="1920" height="1536" alt="645shots_so" src="https://github.com/user-attachments/assets/f2adac53-c398-4eb4-94b2-7a675ed50dbd" />
+<img width="1920" height="1536" alt="173shots_so" src="https://github.com/user-attachments/assets/37020e5a-c8dc-4815-a419-33be99a2cd83" />
+<img width="1920" height="1536" alt="999shots_so" src="https://github.com/user-attachments/assets/bf46838d-70d5-432e-bd38-39990a8e3c55" />
+<img width="1920" height="1536" alt="501shots_so" src="https://github.com/user-attachments/assets/2185544a-822b-425f-997f-26decf36e98d" />
+<img width="1920" height="1536" alt="530shots_so" src="https://github.com/user-attachments/assets/9a3aa510-384a-470e-92d1-9336d04aa7f3" />
+
+
 ## 📋 Requerimientos Implementados
 
 Este backend expone robustamente el cumplimiento de los requerimientos de la evaluación:
