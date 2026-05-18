@@ -1,64 +1,47 @@
 # TicoAutos - Backend 🚙
-
-Servidor Web API y lógica central del ecosistema TicoAutos. Desarrollado bajo un esquema de Arquitectura Orientada a Servicios (SOA), garantizando alto rendimiento, modularización estricta y comunicación segura tanto para interfaces REST como GraphQL.
-
-Este proyecto fue desarrollado como Proyecto Final para el curso **Programación en Ambiente Web II** (ISW-711) de la Universidad Técnica Nacional (UTN).
-
+Web API Server and core logic of the TicoAutos ecosystem. Developed under a Service-Oriented Architecture (SOA) scheme, ensuring high performance, strict modularization, and secure communication for both REST and GraphQL interfaces.
+This project was developed as the Final Project for the **Web Environment Programming II** (ISW-711) course at the Universidad Técnica Nacional (UTN).
 ---
-
-## 🖼 Vista Previa del Proyecto
-
-
+## 🖼 Project Preview
 <img width="1920" height="1536" alt="645shots_so" src="https://github.com/user-attachments/assets/f2adac53-c398-4eb4-94b2-7a675ed50dbd" />
 <img width="1920" height="1536" alt="173shots_so" src="https://github.com/user-attachments/assets/37020e5a-c8dc-4815-a419-33be99a2cd83" />
 <img width="1920" height="1536" alt="999shots_so" src="https://github.com/user-attachments/assets/bf46838d-70d5-432e-bd38-39990a8e3c55" />
 <img width="1920" height="1536" alt="501shots_so" src="https://github.com/user-attachments/assets/2185544a-822b-425f-997f-26decf36e98d" />
 <img width="1920" height="1536" alt="530shots_so" src="https://github.com/user-attachments/assets/9a3aa510-384a-470e-92d1-9336d04aa7f3" />
-
-
-## 📋 Requerimientos Implementados
-
-Este backend expone robustamente el cumplimiento de los requerimientos de la evaluación:
-
-1.  **Validación con Padrón Nacional:** Integración HTTP (vía Axios/Fetch) en el endpoint de registro, el cual consulta la Cédula Nacional en el API Público. Rechaza inscripciones inexistentes y autocompleta el nombre y apellido si es válida.
-2.  **Verificación SendGrid (Email Verification):** Al registrar una cuenta, el usuario queda en estado "Pendiente". El sistema envía un UUID o Hash firmado usando una integración de Emailing a su bandeja, activando la cuenta al resolver la ruta.
-3.  **Google OAuth2 (Login & Registro):** Flujo de autenticación estructurado mediante PassportJS y estrategias de Google. Incluye el proceso de interceptación si un usuario nuevo proviene de Google y requiere validación de edad obligatoria mediante su Cédula de Identidad.
-4.  **Verificación en Dos Pasos (2FA - SMS):** Integración con servicios de mensajería (Twilio/Alternativos). Autentica las contraseñas, despacha un número OTP vía mensaje de texto, y retiene el Token JWT de autorización real hasta que se valide el código.
-5.  **Capa GraphQL Integrada:** Apollo Server inyectado en la instancia de NestJS que expone servicios como los datos de Vehículos mediante Resolvers de GraphQL. Comparte el mismo contexto y barreras de seguridad (Guards) que REST, autorizándose a través del mismo token JWT.
-6.  **Validación de Mensajes de Chat con OpenAI:** A través de un Custom Service (`AiService`), el flujo de envío de mensajes hacia la base de datos es retenido y analizado por una instrucción de Inteligencia Artificial ("gpt-3.5-turbo" / "gpt-4o-mini"). La IA escanea por números de teléfono, enlaces o emails y rechaza la inserción indicando la regla dictaminada.
-7.  **Diagramado Arquitectónico:** Total cumplimiento de la separación y esquema mediante un diagrama ilustrativo de la solución final.
-
+## 📋 Implemented Requirements
+This backend robustly demonstrates compliance with the evaluation requirements:
+1.  **National Registry Validation:** HTTP integration (via Axios/Fetch) in the registration endpoint, which queries the National ID in the Public API. It rejects non-existent registrations and auto-completes the first and last name if valid.
+2.  **SendGrid Verification (Email Verification):** When registering an account, the user is placed in a "Pending" state. The system sends a UUID or signed Hash using an Emailing integration to their inbox, activating the account upon resolving the route.
+3.  **Google OAuth2 (Login & Registration):** Structured authentication flow using PassportJS and Google strategies. Includes the interception process if a new user comes from Google and requires mandatory age validation via their National ID Card.
+4.  **Two-Factor Authentication (2FA - SMS):** Integration with messaging services (Twilio/Alternatives). Authenticates passwords, dispatches an OTP number via text message, and retains the real authorization JWT Token until the code is validated.
+5.  **Integrated GraphQL Layer:** Apollo Server injected into the NestJS instance that exposes services like Vehicle data through GraphQL Resolvers. It shares the same context and security barriers (Guards) as REST, authorizing through the same JWT token.
+6.  **Chat Message Validation with OpenAI:** Through a Custom Service (`AiService`), the flow of sending messages to the database is retained and analyzed by an Artificial Intelligence instruction ("gpt-3.5-turbo" / "gpt-4o-mini"). The AI scans for phone numbers, links, or emails and rejects the insertion indicating the dictated rule.
+7.  **Architectural Diagramming:** Full compliance with the separation and scheme through an illustrative diagram of the final solution.
 ---
-
-## 🛠 Tecnologías Utilizadas
-
+## 🛠 Technologies Used
 -   **Node.js & TypeScript**
--   **NestJS** (Framework Arquitectónico, Dependency Injection)
--   **MongoDB & Mongoose** (Bases de datos no relacionales, Modelos, ODM)
--   **GraphQL & Apollo Driver** (Consultas declarativas y resolutores)
--   **Passport.js & JWT** (Manejo de estados sin sesiones, estrategias Google y Locales)
--   **OpenAI SDK** (Machine Learning/Validación Inteligente)
--   **Git** (Control de Versiones estricto en ramas main y flujos convencionales)
-
+-   **NestJS** (Architectural Framework, Dependency Injection)
+-   **MongoDB & Mongoose** (Non-relational databases, Models, ODM)
+-   **GraphQL & Apollo Driver** (Declarative queries and resolvers)
+-   **Passport.js & JWT** (Stateless state management, Google and Local strategies)
+-   **OpenAI SDK** (Machine Learning/Intelligent Validation)
+-   **Git** (Strict Version Control on main branches and conventional flows)
 ---
-
-## 🚀 Guía de Instalación y Ejecución Local
-
-Para levantar el nodo de servidor:
-
-### 1. Clonar el repositorio
+## 🚀 Local Installation and Execution Guide
+To start the server node:
+### 1. Clone the repository
 ```bash
 git clone https://github.com/jrodriguezes/backend-tico-autos-II.git
 cd backend-tico-autos-II
 ```
 
-### 2. Instalar dependencias
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-### 3. Variables de Entorno
-Debes crear un archivo `.env` en la raíz de tu proyecto e introducir la configuración vital. Reemplaza los datos con los reales proporcionados en la integración:
+### 3. Environment Variables
+You must create a .env file in the root of your project and input the vital configuration. Replace the data with the real ones provided in the integration:
 ```env
 # Ejemplo de .env
 PORT=3000
@@ -70,26 +53,23 @@ OPENAI_API_KEY=sk-tu_key_de_openai
 # Y otras variables de correo (Sendgrid) o SMS (Twilio)...
 ```
 
-### 4. Iniciar el Servidor
-Para arrancar NestJS en modo desarrollo con Hot-Reload:
+### 4. Start the Server
+To start NestJS in development mode with Hot-Reload:
 ```bash
 npm run start:dev
 ```
-El API estará localmente expuesta por defecto en `http://localhost:3000`.
+The API will be exposed locally by default at `http://localhost:3000`.
 
 ---
 
-## 🧱 Estructura y Mejores Prácticas (Clean Code)
+## 🧱 Structure and Best Practices (Clean Code)
 
-Se han implementado y respetado lineamientos de Código Limpio y principios SOLID guiados por NestJS:
--   Archivos separados rigurosamente por su función (`.controller.ts`, `.service.ts`, `.module.ts`, `.schema.ts`, `.resolver.ts`).
--   Uso de **Data Transfer Objects (DTOs)** para validar los JSON entrantes con `class-validator` y `class-transformer`.
--   Nomenclatura consistente en inglés para servicios de código y commits semánticos de Git.
+Clean Code guidelines and SOLID principles guided by NestJS have been implemented and respected:
+-   Files strictly separated by their function (.controller.ts, .service.ts, .module.ts, .schema.ts, .resolver.ts).
+-   Use of Data Transfer Objects (DTOs) to validate incoming JSONs with class-validator and class-transformer.
+-   Consistent English nomenclature for code services and semantic Git commits.
 
 ---
 
-## 🧱 Diagrama del sistema:
+## 🧱 System Diagram:
 <img width="1672" height="941" alt="ChatGPT Image May 4, 2026, 10_42_55 PM" src="https://github.com/user-attachments/assets/961b6f7a-f6d4-44b6-bd16-be8a5fc28edf" />
-
-
-*Desarrollado para la Universidad Técnica Nacional - 2026*
