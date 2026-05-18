@@ -90,6 +90,3 @@ Clean Code guidelines and SOLID principles guided by NestJS have been implemente
 
 ## 🧱 System Diagram:
 <img width="1672" height="941" alt="ChatGPT Image May 4, 2026, 10_42_55 PM" src="https://github.com/user-attachments/assets/961b6f7a-f6d4-44b6-bd16-be8a5fc28edf" />
-
-
-*Developed for the Universidad Técnica Nacional - 2026*
